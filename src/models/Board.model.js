@@ -21,9 +21,13 @@ const createNew = async data => {
       const result = await getDB()
          .collection(boardCollectionName)
          .insertOne(value);
-      return result;
+      if (result.acknowledged) {
+         return (data = await getDB()
+            .collection(boardCollectionName)
+            .findOne({ _id: result.insertedId }));
+      }
    } catch (err) {
-      console.log(err);
+      throw new Error(err);
    }
 };
 

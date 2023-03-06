@@ -4,7 +4,7 @@ import { getDB } from '../config/mongodb';
 // Define Board collection schema
 const boardCollectionName = 'Boards';
 const BoardSchema = Joi.object({
-   title: Joi.string().required().min(3).max(30),
+   title: Joi.string().required().min(3).max(20).trim(),
    columnOrder: Joi.array().items(Joi.string()).default([]),
    createdAt: Joi.date().timestamp().default(Date.now()),
    updatedAt: Joi.date().timestamp().default(null),
@@ -22,9 +22,9 @@ const createNew = async data => {
          .collection(boardCollectionName)
          .insertOne(value);
       if (result.acknowledged) {
-         return (data = await getDB()
+         return await getDB()
             .collection(boardCollectionName)
-            .findOne({ _id: result.insertedId }));
+            .findOne({ _id: result.insertedId });
       }
    } catch (err) {
       throw new Error(err);

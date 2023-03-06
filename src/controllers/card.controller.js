@@ -1,10 +1,10 @@
-import { BoardService } from '../services/board.service';
+import { CardService } from '../services/card.service';
 import { HttpStatusCode } from '../utilities/constants';
 
-export default new (class BoardController {
+export default new (class CardController {
    createNew = async (req, res) => {
       try {
-         const result = await BoardService.createNew(req.body);
+         const result = await CardService.createNew(req.body);
 
          res.status(HttpStatusCode.CREATED).json(result);
       } catch (err) {

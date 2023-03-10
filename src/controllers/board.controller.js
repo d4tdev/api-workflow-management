@@ -14,4 +14,17 @@ export default new (class BoardController {
          });
       }
    };
+   getABoard = async (req, res) => {
+      try {
+         const { id } = req.params;
+         const result = await BoardService.getABoard(id);
+
+         res.status(HttpStatusCode.CREATED).json(result);
+      } catch (err) {
+         console.log(err);
+         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            errors: err.message,
+         });
+      }
+   };
 })();

@@ -9,4 +9,6 @@ router
    // .get()
    .post(BoardValidation.createNew, BoardController.createNew);
 
+router.route('/:id').get(BoardController.getABoard);
+
 export const boardRouter = router;

@@ -1,11 +1,12 @@
 import Joi from 'joi';
+import { ObjectId } from 'mongodb';
 import { getDB } from '../config/mongodb';
 
 // Define Board collection schema
 const columnCollectionName = 'Columns';
 const ColumnSchema = Joi.object({
-   boardId: Joi.string().required(),
-   title: Joi.string().required().min(3).max(20),
+   boardId: Joi.string().required(), // also ObjectId when create new
+   title: Joi.string().required().min(3).max(20).trim(),
    cardOrder: Joi.array().items(Joi.string()).default([]),
    createdAt: Joi.date().timestamp().default(Date.now()),
    updatedAt: Joi.date().timestamp().default(null),
@@ -19,13 +20,60 @@ const validateSchema = async data => {
 const createNew = async data => {
    try {
       const value = await validateSchema(data);
+      const insertValue = {
+         ...value,
+         boardId: new ObjectId(value.boardId),
+      };
       const result = await getDB()
          .collection(columnCollectionName)
-         .insertOne(value);
-      return result;
+         .insertOne(insertValue);
+      if (result.acknowledged) {
+         return await getDB()
+            .collection(columnCollectionName)
+            .findOne({ _id: result._id });
+      }
    } catch (err) {
-      console.log(err);
+      throw new Error(err);
    }
 };
 
-export const ColumnModel = { createNew };
+/**
+ *
+ * @param {string} boardId
+ * @param {string} columnId
+ */
+const pushCardOrder = async (columnId, cardId) => {
+   try {
+      const result = await getDB()
+         .collection(columnCollectionName)
+         .findOneAndUpdate(
+            { _id: new ObjectId(columnId) },
+            {
+               $push: {
+                  cardOrder: cardId,
+               },
+            },
+            { returnDocument: 'after' }
+         );
+      return result.value;
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+const updateOne = async (id, data) => {
+   try {
+      const result = await getDB()
+         .collection(columnCollectionName)
+         .findOneAndUpdate(
+            { _id: new ObjectId(id) },
+            { $set: data },
+            { returnDocument: 'after' } // trả về document sau khi update
+         );
+      return { status: 'Update success', data: result.value };
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+export const ColumnModel = { createNew, updateOne, pushCardOrder };

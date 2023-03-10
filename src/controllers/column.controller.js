@@ -1,10 +1,10 @@
-import { BoardService } from '../services/board.service';
+import { ColumnService } from '../services/column.service';
 import { HttpStatusCode } from '../utilities/constants';
 
-export default new (class BoardController {
+export default new (class ColumnController {
    createNew = async (req, res) => {
       try {
-         const result = await BoardService.createNew(req.body);
+         const result = await ColumnService.createNew(req.body);
 
          res.status(HttpStatusCode.CREATED).json(result);
       } catch (err) {
@@ -14,10 +14,11 @@ export default new (class BoardController {
          });
       }
    };
-   getABoard = async (req, res) => {
+
+   updateOne = async (req, res) => {
       try {
          const { id } = req.params;
-         const result = await BoardService.getABoard(id);
+         const result = await ColumnService.updateOne(id, req.body);
 
          res.status(HttpStatusCode.CREATED).json(result);
       } catch (err) {

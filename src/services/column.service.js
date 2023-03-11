@@ -1,9 +1,15 @@
 import { ColumnModel } from '../models/column.model';
+import { BoardModel } from '../models/Board.model';
 
 const createNew = async data => {
    try {
-      const result = await ColumnModel.createNew(data);
-      return result;
+      // Sử dụng transaction mongodb
+      const newColumn = await ColumnModel.createNew(data);
+
+      // Update columnOrder Array in Board collection
+      await BoardModel.pushColumnOrder(newColumn.boardId.toString(), newColumn._id.toString());
+
+      return newColumn;
    } catch (err) {
       throw new Error(err);
    }

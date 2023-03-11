@@ -6,7 +6,9 @@ import { BoardValidation } from '../../validations/board.validation';
 
 router
    .route('/')
-   // .get()
    .post(BoardValidation.createNew, BoardController.createNew);
+router
+   .route('/:id')
+   .get(BoardController.getABoard);
 
 export const boardRouter = router;

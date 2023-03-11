@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { ObjectId } from 'mongodb';
 import { getDB } from '../config/mongodb';
 
 // Define Board collection schema
@@ -31,4 +32,65 @@ const createNew = async data => {
    }
 };
 
-export const BoardModel = { createNew };
+/*
+ *
+ * @param {string} boardId
+ * @param {string} columnId
+ */
+const pushColumnOrder = async (boardId, columnId) => {
+   try {
+      const result = await getDB()
+         .collection(boardCollectionName)
+         .findOneAndUpdate(
+            { _id: new ObjectId(boardId) },
+            {
+               $push: {
+                  columnOrder: columnId,
+               },
+            },
+            { returnDocument: 'after' } // trả về document sau khi update
+         );
+      return result.value;
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+const getABoard = async boardId => {
+   try {
+      const result = await getDB()
+         .collection(boardCollectionName)
+         .aggregate([
+            {
+               $match: { _id: new ObjectId(boardId) },
+            },
+            /*{ // Cách 1:
+               $addFields: { // Add thêm field mới lúc query, nếu trùng thì ghi đè lại field cũ
+                  _id: { $toString: '$_id'} // Chuyển đổi _id từ ObjectId sang String
+               }
+            },*/
+            {
+               $lookup: {
+                  from: 'Columns', // Tên collection cần join
+                  localField: '_id', // Tên field của collection hiện tại
+                  foreignField: 'boardId', // Tên field của collection cần join
+                  as: 'columns',
+               },
+            },
+            {
+               $lookup: {
+                  from: 'Cards',
+                  localField: '_id',
+                  foreignField: 'boardId',
+                  as: 'cards',
+               },
+            },
+         ])
+         .toArray(); // Trả về mảng
+      return result[0] || {};
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+export const BoardModel = { createNew, getABoard, pushColumnOrder };

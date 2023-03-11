@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { ObjectId } from 'mongodb';
 import { getDB } from '../config/mongodb';
 
 // Define Board collection schema
@@ -20,9 +21,14 @@ const validateSchema = async data => {
 const createNew = async data => {
    try {
       const value = await validateSchema(data);
+      const newValue = {
+         ...value,
+         boardId: new ObjectId(value.boardId), // Chuyển đổi boardId từ String sang ObjectId
+         columnId: new ObjectId(value.columnId), // Chuyển đổi columnId từ String sang ObjectId
+      };
       const result = await getDB()
          .collection(cardCollectionName)
-         .insertOne(value);
+         .insertOne(newValue);
       if (result.acknowledged) {
          return await getDB()
             .collection(cardCollectionName)

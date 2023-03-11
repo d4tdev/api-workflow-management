@@ -5,7 +5,7 @@ import { getDB } from '../config/mongodb';
 // Define Board collection schema
 const columnCollectionName = 'Columns';
 const ColumnSchema = Joi.object({
-   boardId: Joi.string().required(), // also ObjectId when create new
+   boardId: Joi.string().required(), // Also ObjectId when create new
    title: Joi.string().required().min(3).max(20).trim(),
    cardOrder: Joi.array().items(Joi.string()).default([]),
    createdAt: Joi.date().timestamp().default(Date.now()),
@@ -20,13 +20,15 @@ const validateSchema = async data => {
 const createNew = async data => {
    try {
       const value = await validateSchema(data);
-      const insertValue = {
+
+      const newValue = {
          ...value,
-         boardId: new ObjectId(value.boardId),
+         boardId: new ObjectId(value.boardId), // Chuyển đổi boardId từ String sang ObjectId
       };
       const result = await getDB()
          .collection(columnCollectionName)
-         .insertOne(insertValue);
+         .insertOne(newValue);
+
       if (result.acknowledged) {
          return await getDB()
             .collection(columnCollectionName)
@@ -39,7 +41,7 @@ const createNew = async data => {
 
 /**
  *
- * @param {string} boardId
+ * @param {string} cardId
  * @param {string} columnId
  */
 const pushCardOrder = async (columnId, cardId) => {
@@ -53,7 +55,7 @@ const pushCardOrder = async (columnId, cardId) => {
                   cardOrder: cardId,
                },
             },
-            { returnDocument: 'after' }
+            { returnDocument: 'after' } // trả về document sau khi update
          );
       return result.value;
    } catch (err) {

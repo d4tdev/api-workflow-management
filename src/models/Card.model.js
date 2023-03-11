@@ -21,14 +21,16 @@ const validateSchema = async data => {
 const createNew = async data => {
    try {
       const value = await validateSchema(data);
-      const insertValue = {
+
+      const newValue = {
          ...value,
-         boardId: new ObjectId(value.boardId),
-         columnId: new ObjectId(value.columnId),
+         boardId: new ObjectId(value.boardId), // Chuyển đổi boardId từ String sang ObjectId
+         columnId: new ObjectId(value.columnId), // Chuyển đổi columnId từ String sang ObjectId
       };
       const result = await getDB()
          .collection(cardCollectionName)
-         .insertOne(insertValue);
+         .insertOne(newValue);
+         
       if (result.acknowledged) {
          return await getDB()
             .collection(cardCollectionName)

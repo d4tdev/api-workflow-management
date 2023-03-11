@@ -8,22 +8,18 @@ const createNew = async data => {
       throw new Error(err);
    }
 };
-
 const getABoard = async boardId => {
    try {
       const board = await BoardModel.getABoard(boardId);
 
       // Add card to each column
       board.columns.forEach(column => {
-         column.cards = board.cards.filter(
-            card => card.columnId.toString() === column._id.toString()
-         );
+         column.cards = board.cards.filter(card => card.columnId.toString() === column._id.toString()) // Luôn trả về Array
       });
 
-      // Sort columns by column Order, sort cards by column Order (passed in FE)
+      // Sort columns by columnOrder, sort cards by cardOrder (handle in FE side)
 
-      // Remove card data from boards
-      delete board.cards;
+      delete board.cards; // Xóa thuộc tính cards khỏi board
 
       return board;
    } catch (err) {

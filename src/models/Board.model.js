@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { ObjectId } from 'mongodb';
 import { getDB } from '../config/mongodb';
 import { ObjectId } from 'mongodb';
 
@@ -32,6 +33,7 @@ const createNew = async data => {
    }
 };
 
+
 /**
  *
  * @param {string} boardId
@@ -48,7 +50,9 @@ const pushColumnOrder = async (boardId, columnId) => {
                   columnOrder: columnId,
                },
             },
-            { returnDocument: 'after' }
+
+            { returnDocument: 'after' } // trả về document sau khi update
+
          );
       return result.value;
    } catch (err) {
@@ -61,17 +65,20 @@ const getABoard = async boardId => {
       const result = await getDB()
          .collection(boardCollectionName)
          .aggregate([
-            { $match: { _id: new ObjectId(boardId) } },
-            // {
-            //    $addFields: {
-            //       _id: { $toString: '$_id' }, // bị trùng id thì sẽ ghi đè (chỉ ghi đè trong QT query, k ảnh hưởng đến dữ liệu), chuyển đổi thành string
-            //    },
-            // },
+
+            {
+               $match: { _id: new ObjectId(boardId) },
+            },
+            /*{ // Cách 1:
+               $addFields: { // Add thêm field mới lúc query, nếu trùng thì ghi đè lại field cũ
+                  _id: { $toString: '$_id'} // Chuyển đổi _id từ ObjectId sang String
+               }
+            },*/
             {
                $lookup: {
-                  from: 'Columns',
-                  localField: '_id',
-                  foreignField: 'boardId',
+                  from: 'Columns', // Tên collection cần join
+                  localField: '_id', // Tên field của collection hiện tại
+                  foreignField: 'boardId', // Tên field của collection cần join
                   as: 'columns',
                },
             },
@@ -84,7 +91,8 @@ const getABoard = async boardId => {
                },
             },
          ])
-         .toArray();
+         .toArray(); // Trả về mảng
+
       return result[0] || {};
    } catch (err) {
       throw new Error(err);

@@ -5,8 +5,8 @@ import { getDB } from '../config/mongodb';
 // Define Board collection schema
 const cardCollectionName = 'Cards';
 const CardSchema = Joi.object({
-   boardId: Joi.string().required(),
-   columnId: Joi.string().required(),
+   boardId: Joi.string().required(), // also ObjectId when create new
+   columnId: Joi.string().required(), // also ObjectId when create new
    title: Joi.string().required().min(3).max(40).trim(),
    cover: Joi.string().default(''),
    createdAt: Joi.date().timestamp().default(Date.now()),
@@ -21,6 +21,7 @@ const validateSchema = async data => {
 const createNew = async data => {
    try {
       const value = await validateSchema(data);
+
       const newValue = {
          ...value,
          boardId: new ObjectId(value.boardId), // Chuyển đổi boardId từ String sang ObjectId
@@ -29,10 +30,11 @@ const createNew = async data => {
       const result = await getDB()
          .collection(cardCollectionName)
          .insertOne(newValue);
+         
       if (result.acknowledged) {
          return await getDB()
             .collection(cardCollectionName)
-            .findOne({ _id: result.insertedId });
+            .findOne({ _id: result._id });
       }
    } catch (err) {
       throw new Error(err);

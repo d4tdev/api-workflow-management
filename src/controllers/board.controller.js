@@ -16,7 +16,8 @@ export default new (class BoardController {
    };
    getABoard = async (req, res) => {
       try {
-         const result = await BoardService.getABoard(req.params.id);
+         const { id } = req.params;
+         const result = await BoardService.getABoard(id);
 
          res.status(HttpStatusCode.CREATED).json(result);
       } catch (err) {

@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { ObjectId } from 'mongodb';
 import { getDB } from '../config/mongodb';
+import { ObjectId } from 'mongodb';
 
 // Define Board collection schema
 const boardCollectionName = 'Boards';
@@ -32,7 +33,8 @@ const createNew = async data => {
    }
 };
 
-/*
+
+/**
  *
  * @param {string} boardId
  * @param {string} columnId
@@ -48,7 +50,9 @@ const pushColumnOrder = async (boardId, columnId) => {
                   columnOrder: columnId,
                },
             },
+
             { returnDocument: 'after' } // trả về document sau khi update
+
          );
       return result.value;
    } catch (err) {
@@ -61,6 +65,7 @@ const getABoard = async boardId => {
       const result = await getDB()
          .collection(boardCollectionName)
          .aggregate([
+
             {
                $match: { _id: new ObjectId(boardId) },
             },
@@ -87,6 +92,7 @@ const getABoard = async boardId => {
             },
          ])
          .toArray(); // Trả về mảng
+
       return result[0] || {};
    } catch (err) {
       throw new Error(err);

@@ -9,6 +9,7 @@ const createNew = async data => {
       await ColumnModel.pushCardOrder(newCard.columnId.toString(), newCard._id.toString());
 
       return newCard;
+
    } catch (err) {
       throw new Error(err);
    }

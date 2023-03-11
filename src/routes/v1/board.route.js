@@ -11,4 +11,6 @@ router
    .route('/:id')
    .get(BoardController.getABoard);
 
+router.route('/:id').get(BoardController.getABoard);
+
 export const boardRouter = router;

@@ -20,6 +20,7 @@ const validateSchema = async data => {
 const createNew = async data => {
    try {
       const value = await validateSchema(data);
+
       const newValue = {
          ...value,
          boardId: new ObjectId(value.boardId), // Chuyển đổi boardId từ String sang ObjectId
@@ -27,20 +28,21 @@ const createNew = async data => {
       const result = await getDB()
          .collection(columnCollectionName)
          .insertOne(newValue);
+
       if (result.acknowledged) {
          return await getDB()
             .collection(columnCollectionName)
-            .findOne({ _id: result.insertedId });
+            .findOne({ _id: result._id });
       }
    } catch (err) {
       throw new Error(err);
    }
 };
 
-/*
+/**
  *
- * @param {string} boardId
  * @param {string} cardId
+ * @param {string} columnId
  */
 const pushCardOrder = async (columnId, cardId) => {
    try {

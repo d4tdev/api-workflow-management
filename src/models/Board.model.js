@@ -1,7 +1,6 @@
 import Joi from 'joi';
 import { ObjectId } from 'mongodb';
 import { getDB } from '../config/mongodb';
-import { ObjectId } from 'mongodb';
 
 // Define Board collection schema
 const boardCollectionName = 'Boards';

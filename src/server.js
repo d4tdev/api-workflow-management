@@ -1,7 +1,9 @@
 import express from 'express';
 import { connectDB } from './config/mongodb';
 import { env } from '*/config/environment';
+import cors from 'cors';
 
+import { corsOptions } from './config/cors';
 import { routes } from './routes';
 
 const hostname = env.HOSTNAME;
@@ -17,6 +19,7 @@ connectDB()
 const bootServer = () => {
    const app = express();
 
+   app.use(cors(corsOptions));
    app.use(express.json());
    app.use(express.urlencoded({ extended: true }));
 

@@ -33,9 +33,11 @@ const createNew = async data => {
 };
 
 /**
- *
- * @param {string} boardId
- * @param {string} columnId
+ * It takes a boardId and a columnId, and pushes the columnId into the columnOrder array of the board
+ * with the given boardId.
+ * @param {string} boardId - the id of the board you want to update
+ * @param {string} columnId - the id of the column to be added to the columnOrder array
+ * @returns The result of the update operation.
  */
 const pushColumnOrder = async (boardId, columnId) => {
    try {
@@ -95,4 +97,20 @@ const getABoard = async boardId => {
    }
 };
 
-export const BoardModel = { createNew, getABoard, pushColumnOrder };
+const updateOne = async (id, data) => {
+   try {
+      const newData = { ...data };
+      const result = await getDB()
+         .collection(boardCollectionName)
+         .findOneAndUpdate(
+            { _id: new ObjectId(id) },
+            { $set: newData },
+            { returnDocument: 'after' } // trả về document sau khi update
+         );
+      return { status: 'Update success', data: result.value };
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+export const BoardModel = { createNew, getABoard, pushColumnOrder, updateOne };

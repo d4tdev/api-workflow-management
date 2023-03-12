@@ -13,18 +13,19 @@ const ColumnSchema = Joi.object({
    _destroy: Joi.boolean().default(false),
 });
 
-const validateSchema = async data => {
+const validateSchema = async (data) => {
    return await ColumnSchema.validateAsync(data, { abortEarly: false }); // abortEarly: false to return all errors
 };
 
-const createNew = async data => {
+const createNew = async (data) => {
    try {
       const value = await validateSchema(data);
 
       const newValue = {
          ...value,
-         boardId: new ObjectId(value.boardId), // Chuyển đổi boardId từ String sang ObjectId
       };
+      if (value.boardId) newValue.boardId = new ObjectId(value.boardId); // Chuyển đổi boardId từ String sang ObjectId
+      
       const result = await getDB()
          .collection(columnCollectionName)
          .insertOne(newValue);
@@ -65,7 +66,9 @@ const pushCardOrder = async (columnId, cardId) => {
 
 const updateOne = async (id, data) => {
    try {
-      const newData = { ...data, boardId: new ObjectId(data.boardId) };
+      const newData = { ...data };
+      if (data.boardId) newData.boardId = new ObjectId(data.boardId);
+
       const result = await getDB()
          .collection(columnCollectionName)
          .findOneAndUpdate(

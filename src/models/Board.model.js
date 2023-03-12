@@ -32,7 +32,6 @@ const createNew = async data => {
    }
 };
 
-
 /**
  *
  * @param {string} boardId
@@ -51,7 +50,6 @@ const pushColumnOrder = async (boardId, columnId) => {
             },
 
             { returnDocument: 'after' } // trả về document sau khi update
-
          );
       return result.value;
    } catch (err) {
@@ -64,9 +62,8 @@ const getABoard = async boardId => {
       const result = await getDB()
          .collection(boardCollectionName)
          .aggregate([
-
             {
-               $match: { _id: new ObjectId(boardId) },
+               $match: { _id: new ObjectId(boardId), _destroy: false },
             },
             /*{ // Cách 1:
                $addFields: { // Add thêm field mới lúc query, nếu trùng thì ghi đè lại field cũ

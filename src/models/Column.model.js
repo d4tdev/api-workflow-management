@@ -32,7 +32,7 @@ const createNew = async data => {
       if (result.acknowledged) {
          return await getDB()
             .collection(columnCollectionName)
-            .findOne({ _id: result._id });
+            .findOne({ _id: result.insertedId });
       }
    } catch (err) {
       throw new Error(err);
@@ -65,11 +65,12 @@ const pushCardOrder = async (columnId, cardId) => {
 
 const updateOne = async (id, data) => {
    try {
+      const newData = { ...data, boardId: new ObjectId(data.boardId) };
       const result = await getDB()
          .collection(columnCollectionName)
          .findOneAndUpdate(
             { _id: new ObjectId(id) },
-            { $set: data },
+            { $set: newData },
             { returnDocument: 'after' } // trả về document sau khi update
          );
       return { status: 'Update success', data: result.value };

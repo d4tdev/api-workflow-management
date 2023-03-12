@@ -18,4 +18,24 @@ const createNew = async (req, res, next) => {
    }
 };
 
-export const CardValidation = { createNew };
+const updateOne = async (req, res, next) => {
+   const condition = Joi.object({
+      title: Joi.string().min(3).max(30).trim(),
+      boardId: Joi.string(),
+      columnId: Joi.string(),
+   });
+   try {
+      await condition.validateAsync(req.body, {
+         abortEarly: false,
+         allowUnknown: true, // allow unknown keys that will be ignored
+      });
+      next();
+   } catch (err) {
+      console.log(err);
+      res.status(HttpStatusCode.BAD_REQUEST).json({
+         errors: new Error(err).message,
+      });
+   }
+};
+
+export const CardValidation = { createNew, updateOne };

@@ -9,6 +9,7 @@ const createNew = async (req, res, next) => {
       await condition.validateAsync(req.body, { abortEarly: false });
       next();
    } catch (err) {
+      console.log(err);
       res.status(HttpStatusCode.BAD_REQUEST).json({
          errors: new Error(err).message,
       });

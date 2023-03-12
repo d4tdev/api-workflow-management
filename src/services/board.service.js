@@ -1,4 +1,5 @@
 import { BoardModel } from '../models/board.model';
+import { cloneDeep } from 'lodash';
 
 const createNew = async data => {
    try {
@@ -13,18 +14,24 @@ const getABoard = async boardId => {
       const board = await BoardModel.getABoard(boardId);
       if (!board || !board.columns) throw new Error('Board not found!');
 
+      const transformBoard = cloneDeep(board); // Clone board
+      // Filter deleted columns
+      transformBoard.columns = transformBoard.columns.filter(
+         column => !column._destroy
+      );
+
       // Add card to each column
-      board.columns.forEach(column => {
-         column.cards = board.cards.filter(
+      transformBoard.columns.forEach(column => {
+         column.cards = transformBoard.cards.filter(
             card => card.columnId.toString() === column._id.toString()
-         ); // Luôn trả về Array
+         );
       });
 
       // Sort columns by columnOrder, sort cards by cardOrder (handle in FE side)
 
-      delete board.cards; // Xóa thuộc tính cards khỏi board
+      delete transformBoard.cards; // Xóa thuộc tính cards khỏi board
 
-      return board;
+      return transformBoard;
    } catch (err) {
       throw new Error(err);
    }

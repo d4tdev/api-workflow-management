@@ -30,15 +30,36 @@ const createNew = async data => {
       const result = await getDB()
          .collection(cardCollectionName)
          .insertOne(newValue);
-         
+
       if (result.acknowledged) {
          return await getDB()
             .collection(cardCollectionName)
-            .findOne({ _id: result._id });
+            .findOne({ _id: result.insertedId });
       }
    } catch (err) {
       throw new Error(err);
    }
 };
 
-export const CardModel = { createNew };
+/**
+ * @param {Array of string card id} ids
+ */
+const updateMany = async ids => {
+   try {
+      const transformIds = ids.map(id => new ObjectId(id));
+      const result = await getDB()
+         .collection(cardCollectionName)
+         .updateMany(
+            {
+               _id: { $in: transformIds },
+            },
+            { $set: { _destroy: true } }
+         );
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+export const CardModel = { createNew, updateMany };

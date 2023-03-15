@@ -4,6 +4,7 @@ import { HttpStatusCode } from '../utilities/constants';
 export default new (class BoardController {
    createNew = async (req, res) => {
       try {
+         req.body.userId = req.userId;
          const result = await BoardService.createNew(req.body);
 
          res.status(HttpStatusCode.CREATED).json(result);

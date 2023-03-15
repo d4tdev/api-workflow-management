@@ -5,6 +5,7 @@ import { getDB } from '../config/mongodb';
 // Define Board collection schema
 const boardCollectionName = 'Boards';
 const BoardSchema = Joi.object({
+   userId: Joi.string().required().trim(),
    title: Joi.string().required().min(3).max(20).trim(),
    columnOrder: Joi.array().items(Joi.string()).default([]),
    createdAt: Joi.date().timestamp().default(Date.now()),
@@ -12,16 +13,21 @@ const BoardSchema = Joi.object({
    _destroy: Joi.boolean().default(false),
 });
 
-const validateSchema = async data => {
+const validateSchema = async (data) => {
    return await BoardSchema.validateAsync(data, { abortEarly: false }); // abortEarly: false to return all errors
 };
 
-const createNew = async data => {
+const createNew = async (data) => {
    try {
       const value = await validateSchema(data);
+      const newValue = {
+         ...value,
+      };
+      if (value.userId) newValue.userId = new ObjectId(value.userId);
+
       const result = await getDB()
          .collection(boardCollectionName)
-         .insertOne(value);
+         .insertOne(newValue);
       if (result.acknowledged) {
          return await getDB()
             .collection(boardCollectionName)
@@ -50,7 +56,6 @@ const pushColumnOrder = async (boardId, columnId) => {
                   columnOrder: columnId,
                },
             },
-
             { returnDocument: 'after' } // trả về document sau khi update
          );
       return result.value;
@@ -59,7 +64,7 @@ const pushColumnOrder = async (boardId, columnId) => {
    }
 };
 
-const getABoard = async boardId => {
+const getABoard = async (boardId) => {
    try {
       const result = await getDB()
          .collection(boardCollectionName)

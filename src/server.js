@@ -2,6 +2,7 @@ import express from 'express';
 import { connectDB } from './config/mongodb';
 import { env } from '*/config/environment';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import { corsOptions } from './config/cors';
 import { routes } from './routes';
@@ -11,7 +12,7 @@ const port = env.PORT;
 
 connectDB()
    .then(() => bootServer())
-   .catch(err => {
+   .catch((err) => {
       console.log(err);
       process.exit(1);
    });
@@ -19,6 +20,7 @@ connectDB()
 const bootServer = () => {
    const app = express();
 
+   app.use(cookieParser());
    app.use(cors(corsOptions));
    app.use(express.json());
    app.use(express.urlencoded({ extended: true }));

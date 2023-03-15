@@ -10,4 +10,17 @@ export const corsOptions = {
    },
    credentials: true,
    optionsSuccessStatus: 200,
+   allowedHeaders: [
+      'Authorization',
+      'Content-Type',
+      'Access-Control-Request-Method',
+      'X-Requested-With',
+      'Accept',
+      'Access-Control-Request-Headers',
+      'Origin',
+      'Access-Control-Allow-Headers',
+   ],
+   methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'OPTIONS'],
+   exposedHeaders: ['Access-Control-Allow-Origin'],
+   preflightContinue: true,
 };

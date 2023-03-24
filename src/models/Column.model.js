@@ -25,7 +25,7 @@ const createNew = async (data) => {
          ...value,
       };
       if (value.boardId) newValue.boardId = new ObjectId(value.boardId); // Chuyển đổi boardId từ String sang ObjectId
-      
+
       const result = await getDB()
          .collection(columnCollectionName)
          .insertOne(newValue);
@@ -82,4 +82,25 @@ const updateOne = async (id, data) => {
    }
 };
 
-export const ColumnModel = { createNew, updateOne, pushCardOrder };
+/**
+ * @param {Array of string card id} ids
+ */
+const updateMany = async (ids) => {
+   try {
+      const transformIds = ids.map((id) => new ObjectId(id));
+      const result = await getDB()
+         .collection(columnCollectionName)
+         .updateMany(
+            {
+               _id: { $in: transformIds },
+            },
+            { $set: { _destroy: true } }
+         );
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+export const ColumnModel = { createNew, updateOne, pushCardOrder, updateMany };

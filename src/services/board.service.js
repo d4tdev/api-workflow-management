@@ -1,6 +1,7 @@
 import { BoardModel } from '../models/board.model';
 import { UserModel } from '../models/User.model';
 import { cloneDeep } from 'lodash';
+import { ColumnService } from './column.service';
 
 const createNew = async (data) => {
    try {
@@ -53,10 +54,26 @@ const updateOne = async (id, data) => {
 
       const updatedBoard = await BoardModel.updateOne(id, updateData);
 
+      if (updatedBoard.data._destroy) {
+         // get all the columns of the board
+         for (const column of updatedBoard.data.columnOrder) {
+            await ColumnService.updateOne(column, { _destroy: true });
+         }
+      }
+
       return updatedBoard;
    } catch (err) {
       throw new Error(err);
    }
 };
 
-export const BoardService = { createNew, getABoard, updateOne };
+const getAllBoards = async (userId) => {
+   try {
+      const boards = await BoardModel.getAllBoards(userId);
+      return boards;
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+export const BoardService = { createNew, getABoard, updateOne, getAllBoards };

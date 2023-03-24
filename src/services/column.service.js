@@ -2,7 +2,7 @@ import { ColumnModel } from '../models/column.model';
 import { BoardModel } from '../models/Board.model';
 import { CardModel } from '../models/Card.model';
 
-const createNew = async data => {
+const createNew = async (data) => {
    try {
       // Sử dụng transaction mongodb
       const newColumn = await ColumnModel.createNew(data);

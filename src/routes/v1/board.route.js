@@ -11,7 +11,8 @@ router
       AuthMiddleware.verifyToken,
       BoardValidation.createNew,
       BoardController.createNew
-   );
+   )
+   .get(AuthMiddleware.verifyToken, BoardController.getAllBoards);
 router
    .route('/:id')
    .get(AuthMiddleware.verifyToken, BoardController.getABoard)

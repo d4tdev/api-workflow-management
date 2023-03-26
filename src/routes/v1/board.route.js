@@ -14,6 +14,9 @@ router
    )
    .get(AuthMiddleware.verifyToken, BoardController.getAllBoards);
 router
+   .route('/deleted')
+   .get(AuthMiddleware.verifyToken, BoardController.getDeletedBoards);
+router
    .route('/:id')
    .get(AuthMiddleware.verifyToken, BoardController.getABoard)
    .put(

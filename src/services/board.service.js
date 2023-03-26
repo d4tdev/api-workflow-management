@@ -76,4 +76,19 @@ const getAllBoards = async (userId) => {
    }
 };
 
-export const BoardService = { createNew, getABoard, updateOne, getAllBoards };
+const getDeletedBoards = async (userId) => {
+   try {
+      const boards = await BoardModel.getDeletedBoards(userId);
+      return boards;
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
+export const BoardService = {
+   createNew,
+   getABoard,
+   updateOne,
+   getAllBoards,
+   getDeletedBoards,
+};

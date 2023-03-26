@@ -106,7 +106,7 @@ const updateOne = async (id, data) => {
    try {
       const newData = { ...data };
       if (data.userId) newData.userId = new ObjectId(data.userId);
-      
+
       const result = await getDB()
          .collection(boardCollectionName)
          .findOneAndUpdate(
@@ -132,10 +132,23 @@ const getAllBoards = async (userId) => {
    }
 };
 
+const getDeletedBoards = async (userId) => {
+   try {
+      const result = await getDB()
+         .collection(boardCollectionName)
+         .find({ userId: new ObjectId(userId), _destroy: true })
+         .toArray();
+      return result || [];
+   } catch (err) {
+      throw new Error(err);
+   }
+};
+
 export const BoardModel = {
    createNew,
    getABoard,
    pushColumnOrder,
    updateOne,
    getAllBoards,
+   getDeletedBoards,
 };

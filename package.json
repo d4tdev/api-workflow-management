@@ -1,0 +1,47 @@
+{
+   "name": "trello-mern-api",
+   "version": "1.0.0",
+   "description": "",
+   "main": "server.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "remove-build": "rmdir /s /q build",
+      "create-build": "mkdir build",
+      "clean": "npm run remove-build && npm run create-build",
+      "build-babel": "babel ./src -d ./build/src",
+      "production": "npm run build && node ./build/server.js",
+      "webpack": "webpack --mode development --config webpack.config.cjs",
+      "start1": "npm run webpack & node dist/main",
+      "start": "node server.js",
+      "dev": "nodemon --exec babel-node server.js"
+   },
+   "keywords": [],
+   "author": "",
+   "license": "ISC",
+   "devDependencies": {
+      "@babel/cli": "^7.20.7",
+      "@babel/core": "^7.20.12",
+      "@babel/node": "^7.20.7",
+      "@babel/plugin-transform-runtime": "^7.19.6",
+      "@babel/preset-env": "^7.20.2",
+      "babel-loader": "^9.1.2",
+      "babel-plugin-module-resolver": "^5.0.0",
+      "nodemon": "^2.0.20",
+      "webpack": "^5.75.0",
+      "webpack-cli": "^5.0.1",
+      "webpack-node-externals": "^3.0.0"
+   },
+   "dependencies": {
+      "@babel/runtime": "^7.20.13",
+      "argon2": "^0.30.3",
+      "cookie-parser": "^1.4.6",
+      "cors": "^2.8.5",
+      "dotenv": "^16.0.3",
+      "express": "^4.18.2",
+      "joi": "^17.8.3",
+      "jsonwebtoken": "^9.0.0",
+      "lodash": "^4.17.21",
+      "mongodb": "^5.0.1",
+      "morgan": "^1.10.0"
+   }
+}

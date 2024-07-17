@@ -4,7 +4,7 @@ const { env } = require('./config/environment')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
-const { corsOptions } = require('./config/cors')
+const corsOptions = require('./config/cors')
 const routes = require('./routes')
 
 connectDB()
